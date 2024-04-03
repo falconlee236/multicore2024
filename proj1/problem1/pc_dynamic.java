@@ -7,6 +7,7 @@ public class pc_dynamic {
     private static final int TASK_SIZE = 10;
 
     public static void main (String[] args) {
+        long startTime = System.currentTimeMillis();
         if (args.length == 2) {
             NUM_THREADS = Integer.parseInt(args[0]);
             NUM_END = Integer.parseInt(args[1]);
@@ -16,9 +17,8 @@ public class pc_dynamic {
         pc_dynamic_task tasks = new pc_dynamic_task(NUM_START, NUM_END, TASK_SIZE);
         pc_dynamic_thread[] threads = new pc_dynamic_thread[NUM_THREADS];
 
-        long startTime = System.currentTimeMillis();
         for (int i = 0; i < NUM_THREADS; i++) {
-            threads[i] = new pc_dynamic_thread(i + 1, NUM_END, TASK_SIZE, tasks, counter);
+            threads[i] = new pc_dynamic_thread(i, NUM_END, TASK_SIZE, tasks, counter);
             threads[i].start();
         }
 
@@ -57,12 +57,12 @@ class pc_dynamic_task {
 }
 
 class pc_dynamic_thread extends Thread {
-    final int thread_num, num_end, task_size;
+    final int thread_id, num_end, task_size;
     pc_dynamic_task tasks;
     pc_dynamic_counter counter;
-    public pc_dynamic_thread(int thread_num, int num_end, int task_size,
+    public pc_dynamic_thread(int thread_id, int num_end, int task_size,
                              pc_dynamic_task tasks, pc_dynamic_counter counter) {
-        this.thread_num = thread_num;
+        this.thread_id = thread_id;
         this.num_end = num_end;
         this.task_size = task_size;
         this.tasks = tasks;
@@ -81,7 +81,7 @@ class pc_dynamic_thread extends Thread {
         }
         long endTime = System.currentTimeMillis();
         long timeDiff = endTime - startTime;
-        System.out.println("Thread " + thread_num + " Execution Time : " + timeDiff + "ms");
+        System.out.println("Thread " + thread_id + " Execution Time : " + timeDiff + "ms");
     }
 
     private static boolean isPrime(int x) {

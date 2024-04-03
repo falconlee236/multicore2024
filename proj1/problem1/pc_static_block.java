@@ -6,6 +6,7 @@ public class pc_static_block {
     private static int NUM_THREADS = 4;
 
     public static void main (String[] args) {
+        long startTime = System.currentTimeMillis();
         if (args.length == 2) {
             NUM_THREADS = Integer.parseInt(args[0]);
             NUM_END = Integer.parseInt(args[1]);
@@ -13,7 +14,6 @@ public class pc_static_block {
         pc_static_block_counter counter = new pc_static_block_counter();
         pc_static_block_thread[] threads = new pc_static_block_thread[NUM_THREADS];
 
-        long startTime = System.currentTimeMillis();
         for (int i = 0; i < NUM_THREADS; i++) {
             int start = (int) (Math.ceil(NUM_START
                     + ((NUM_END - NUM_START) * ((double) i / NUM_THREADS))
@@ -42,10 +42,10 @@ class pc_static_block_counter {
 }
 
 class pc_static_block_thread extends Thread {
-    int thread_num, num_start, num_end;
+    int thread_id, num_start, num_end;
     pc_static_block_counter counter;
-    public pc_static_block_thread(int thread_num, int num_start, int num_end, pc_static_block_counter counter) {
-        this.thread_num = thread_num;
+    public pc_static_block_thread(int thread_id, int num_start, int num_end, pc_static_block_counter counter) {
+        this.thread_id = thread_id;
         this.num_start = num_start;
         this.num_end = num_end;
         this.counter = counter;
@@ -59,7 +59,7 @@ class pc_static_block_thread extends Thread {
         }
         long endTime = System.currentTimeMillis();
         long timeDiff = endTime - startTime;
-        System.out.println("Thread " + thread_num + " Execution Time : " + timeDiff + "ms");
+        System.out.println("Thread " + thread_id + " Execution Time : " + timeDiff + "ms");
     }
 
     private static boolean isPrime(int x) {
