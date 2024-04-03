@@ -13,28 +13,28 @@ public class pc_dynamic {
             NUM_THREADS = Integer.parseInt(args[0]);
             NUM_END = Integer.parseInt(args[1]);
         }
-        pc_dynamic_counter counter = new pc_dynamic_counter();
-        int i;
-        long startTime = System.currentTimeMillis();
 
-        // Thread creation
+        pc_dynamic_counter counter = new pc_dynamic_counter();
         pc_dynamic_task_stack task_stack = new pc_dynamic_task_stack(NUM_START, NUM_END, SIZE_OF_TASK);
         pc_dynamic_thread[] threads = new pc_dynamic_thread[NUM_THREADS];
-        for (i=0; i<NUM_THREADS; i++) {
+
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < NUM_THREADS; i++) {
             threads[i] = new pc_dynamic_thread(i, NUM_END, SIZE_OF_TASK, task_stack, counter);
             threads[i].start();
         }
-        for (i=0; i<NUM_THREADS; i++) {
+
+        for (int i = 0; i < NUM_THREADS; i++) {
             try {
                 threads[i].join();
-            } catch (InterruptedException ignored) {
+            } catch (InterruptedException e) {
                 System.out.println("Thread joining failed.");
             }
         }
         long endTime = System.currentTimeMillis();
         long timeDiff = endTime - startTime;
         System.out.println("Program Execution Time : " + timeDiff + "ms");
-        System.out.println("1..." + (NUM_END-1) + " prime# counter=" + counter.num_of_prime_numbers);
+        System.out.println("1..." + (NUM_END-1) + " prime# counter=" + counter.prime_num);
     }
 }
 
@@ -83,9 +83,9 @@ class pc_dynamic_thread extends Thread {
 }
 
 class pc_dynamic_counter {
-    int num_of_prime_numbers = 0;
+    int prime_num = 0;
     synchronized void addCount() {
-        this.num_of_prime_numbers += 1;
+        this.prime_num += 1;
     }
 }
 
