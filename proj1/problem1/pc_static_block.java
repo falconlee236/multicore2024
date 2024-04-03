@@ -11,36 +11,41 @@ public class pc_static_block {
             NUM_END = Integer.parseInt(args[1]);
         }
         pc_static_block_counter counter = new pc_static_block_counter();
-        int i;
-        long startTime = System.currentTimeMillis();
-
-        // Thread creation
         pc_static_block_thread[] threads = new pc_static_block_thread[NUM_THREADS];
-        for (i=0; i<NUM_THREADS; i++) {
-            int thread_num_start = (int) (Math.ceil(NUM_START + ((NUM_END - NUM_START) * ((double) i / NUM_THREADS))));
-            int thread_num_end = (int) (Math.ceil(NUM_START + ((NUM_END - NUM_START) * ((double) (i + 1) / NUM_THREADS))));
-            threads[i] = new pc_static_block_thread(i, thread_num_start, thread_num_end, counter);
+
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < NUM_THREADS; i++) {
+            int start = (int) (Math.ceil(NUM_START
+                    + ((NUM_END - NUM_START) * ((double) i / NUM_THREADS))
+            ));
+            int end = (int) (Math.ceil(NUM_START
+                    + ((NUM_END - NUM_START) * ((double) (i + 1) / NUM_THREADS)))
+            );
+            threads[i] = new pc_static_block_thread(i, start, end, counter);
             threads[i].start();
         }
-        for (i=0; i<NUM_THREADS; i++) {
-            try {
-                threads[i].join();
-            } catch (InterruptedException ignored) {
-                System.out.println("Thread joining failed.");
-            }
+
+        for (int i = 0; i < NUM_THREADS; i++) {
+            try {threads[i].join();}
+            catch (InterruptedException ignored) {}
         }
         long endTime = System.currentTimeMillis();
         long timeDiff = endTime - startTime;
         System.out.println("Program Execution Time : " + timeDiff + "ms");
-        System.out.println("1..." + (NUM_END-1) + " prime# counter=" + counter.num_of_prime_numbers);
+        System.out.println("1..." + (NUM_END-1) + " prime# counter=" + counter.prime_num);
     }
 }
 
+class pc_static_block_counter {
+    int prime_num = 0;
+    synchronized void addCount() {this.prime_num += 1;}
+}
+
 class pc_static_block_thread extends Thread {
-    int thread, num_start, num_end;
+    int thread_num, num_start, num_end;
     pc_static_block_counter counter;
-    public pc_static_block_thread(int thread, int num_start, int num_end, pc_static_block_counter counter) {
-        this.thread = thread;
+    public pc_static_block_thread(int thread_num, int num_start, int num_end, pc_static_block_counter counter) {
+        this.thread_num = thread_num;
         this.num_start = num_start;
         this.num_end = num_end;
         this.counter = counter;
@@ -49,12 +54,12 @@ class pc_static_block_thread extends Thread {
     @Override
     public void run() {
         long startTime = System.currentTimeMillis();
-        for (int i=num_start; i < num_end; i++) {
+        for (int i = num_start; i < num_end; i++) {
             if (isPrime(i)) counter.addCount();;
         }
         long endTime = System.currentTimeMillis();
         long timeDiff = endTime - startTime;
-        System.out.println("Thread " + thread + " Execution Time : " + timeDiff + "ms");
+        System.out.println("Thread " + thread_num + " Execution Time : " + timeDiff + "ms");
     }
 
     private static boolean isPrime(int x) {
@@ -64,12 +69,5 @@ class pc_static_block_thread extends Thread {
             if (x%i == 0) return false;
         }
         return true;
-    }
-}
-
-class pc_static_block_counter {
-    int num_of_prime_numbers = 0;
-    synchronized void addCount() {
-        this.num_of_prime_numbers += 1;
     }
 }
