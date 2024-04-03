@@ -1,12 +1,10 @@
 package proj1.problem1;
 
-import java.util.OptionalInt;
-
 public class pc_dynamic {
     private static final int NUM_START = 0;
     private static int NUM_END = 200000;
     private static int NUM_THREADS = 4;
-    private static final int SIZE_OF_TASK = 10;
+    private static final int TASK_SIZE = 10;
 
     public static void main (String[] args) {
         if (args.length == 2) {
@@ -15,21 +13,18 @@ public class pc_dynamic {
         }
 
         pc_dynamic_counter counter = new pc_dynamic_counter();
-        pc_dynamic_task_stack task_stack = new pc_dynamic_task_stack(NUM_START, NUM_END, SIZE_OF_TASK);
+        pc_dynamic_task tasks = new pc_dynamic_task(NUM_START, NUM_END, TASK_SIZE);
         pc_dynamic_thread[] threads = new pc_dynamic_thread[NUM_THREADS];
 
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < NUM_THREADS; i++) {
-            threads[i] = new pc_dynamic_thread(i, NUM_END, SIZE_OF_TASK, task_stack, counter);
+            threads[i] = new pc_dynamic_thread(i + 1, NUM_END, TASK_SIZE, tasks, counter);
             threads[i].start();
         }
 
         for (int i = 0; i < NUM_THREADS; i++) {
-            try {
-                threads[i].join();
-            } catch (InterruptedException e) {
-                System.out.println("Thread joining failed.");
-            }
+            try {threads[i].join();}
+            catch (InterruptedException ignored) {}
         }
         long endTime = System.currentTimeMillis();
         long timeDiff = endTime - startTime;
@@ -39,20 +34,15 @@ public class pc_dynamic {
 }
 
 class pc_dynamic_thread extends Thread {
-    final int thread, num_end, size_of_task;
+    final int thread_num, num_end, task_size;
+    pc_dynamic_task tasks;
     pc_dynamic_counter counter;
-    pc_dynamic_task_stack task_stack;
-    public pc_dynamic_thread(
-            int thread,
-            int num_end,
-            int size_of_task,
-            pc_dynamic_task_stack task_stack,
-            pc_dynamic_counter counter
-    ) {
-        this.thread = thread;
+    public pc_dynamic_thread(int thread_num, int num_end, int task_size,
+            pc_dynamic_task tasks, pc_dynamic_counter counter) {
+        this.thread_num = thread_num;
         this.num_end = num_end;
-        this.size_of_task = size_of_task;
-        this.task_stack = task_stack;
+        this.task_size = task_size;
+        this.tasks = tasks;
         this.counter = counter;
     }
 
@@ -60,15 +50,15 @@ class pc_dynamic_thread extends Thread {
     public void run() {
         long startTime = System.currentTimeMillis();
         while (true) {
-            int task = task_stack.getTask();
+            int task = tasks.getTask();
             if (task == -1) break;
-            for (int i = task; i < Math.min(task + size_of_task, num_end); i++) {
-                if (isPrime(i)) counter.addCount();
+            for (int i = task; i < Math.min(task + task_size, num_end); i++) {
+                if (isPrime(i)) counter.add_count();
             }
         }
         long endTime = System.currentTimeMillis();
         long timeDiff = endTime - startTime;
-        System.out.println("Thread " + thread + " Execution Time : " + timeDiff + "ms");
+        System.out.println("Thread " + thread_num + " Execution Time : " + timeDiff + "ms");
     }
 
     private static boolean isPrime(int x) {
@@ -83,25 +73,23 @@ class pc_dynamic_thread extends Thread {
 
 class pc_dynamic_counter {
     int prime_num = 0;
-    synchronized void addCount() {
-        this.prime_num += 1;
-    }
+    synchronized void add_count() {this.prime_num += 1;}
 }
 
-class pc_dynamic_task_stack {
-    final int num_start, num_end, size_of_task;
+class pc_dynamic_task {
+    final int num_start, num_end, task_size;
     int current_task;
 
-    public pc_dynamic_task_stack(int num_start, int num_end, int size_of_task) {
+    public pc_dynamic_task(int num_start, int num_end, int task_size) {
         this.num_start = num_start;
         this.num_end = num_end;
-        this.size_of_task = size_of_task;
+        this.task_size = task_size;
         this.current_task = num_start;
     }
 
     synchronized int getTask() {
         if (current_task >= num_end) return -1;
-        current_task += size_of_task;
-        return current_task - size_of_task;
+        current_task += task_size;
+        return current_task - task_size;
     }
 }
