@@ -33,12 +33,35 @@ public class pc_dynamic {
     }
 }
 
+class pc_dynamic_counter {
+    int prime_num = 0;
+    synchronized void add_count() {this.prime_num += 1;}
+}
+
+class pc_dynamic_task {
+    final int num_start, num_end, task_size;
+    int current_task;
+
+    public pc_dynamic_task(int num_start, int num_end, int task_size) {
+        this.num_start = num_start;
+        this.num_end = num_end;
+        this.task_size = task_size;
+        this.current_task = num_start;
+    }
+
+    synchronized int getTask() {
+        if (current_task >= num_end) return -1;
+        current_task += task_size;
+        return current_task - task_size;
+    }
+}
+
 class pc_dynamic_thread extends Thread {
     final int thread_num, num_end, task_size;
     pc_dynamic_task tasks;
     pc_dynamic_counter counter;
     public pc_dynamic_thread(int thread_num, int num_end, int task_size,
-            pc_dynamic_task tasks, pc_dynamic_counter counter) {
+                             pc_dynamic_task tasks, pc_dynamic_counter counter) {
         this.thread_num = thread_num;
         this.num_end = num_end;
         this.task_size = task_size;
@@ -68,28 +91,5 @@ class pc_dynamic_thread extends Thread {
             if (x%i == 0) return false;
         }
         return true;
-    }
-}
-
-class pc_dynamic_counter {
-    int prime_num = 0;
-    synchronized void add_count() {this.prime_num += 1;}
-}
-
-class pc_dynamic_task {
-    final int num_start, num_end, task_size;
-    int current_task;
-
-    public pc_dynamic_task(int num_start, int num_end, int task_size) {
-        this.num_start = num_start;
-        this.num_end = num_end;
-        this.task_size = task_size;
-        this.current_task = num_start;
-    }
-
-    synchronized int getTask() {
-        if (current_task >= num_end) return -1;
-        current_task += task_size;
-        return current_task - task_size;
     }
 }
