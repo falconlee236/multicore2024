@@ -60,9 +60,8 @@ class pc_dynamic_thread extends Thread {
     public void run() {
         long startTime = System.currentTimeMillis();
         while (true) {
-            OptionalInt get_task = task_stack.getTask();
-            if (get_task.isEmpty()) break;
-            int task = get_task.getAsInt();
+            int task = task_stack.getTask();
+            if (task == -1) break;
             for (int i = task; i < Math.min(task + size_of_task, num_end); i++) {
                 if (isPrime(i)) counter.addCount();
             }
@@ -100,9 +99,9 @@ class pc_dynamic_task_stack {
         this.current_task = num_start;
     }
 
-    synchronized OptionalInt getTask() {
-        if (current_task >= num_end) return OptionalInt.empty();
+    synchronized int getTask() {
+        if (current_task >= num_end) return -1;
         current_task += size_of_task;
-        return OptionalInt.of(current_task - size_of_task);
+        return current_task - size_of_task;
     }
 }
