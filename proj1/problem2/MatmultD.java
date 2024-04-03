@@ -9,8 +9,7 @@ import java.util.Scanner;
 // In eclipse, set the argument value and file input by using the menu [Run]->[Run Configurations]->{[Arguments], [Common->Input File]}.
 
 // Original JAVA source code: http://stackoverflow.com/questions/21547462/how-to-multiply-2-dimensional-arrays-matrix-multiplication
-public class MatmultD
-{
+public class MatmultD {
     private static Scanner sc = new Scanner(System.in);
     public static void main(String [] args)
     {
