@@ -13,7 +13,7 @@ public class MatmultD { //125231132
         int a[][]=readMatrix();
         int b[][]=readMatrix();
 
-        MatmultDMatrixResult result_matrix = new MatmultDMatrixResult(a.length, b[0].length);
+        MatmultDMResult result_matrix = new MatmultDMResult(a.length, b[0].length);
         long startTime = System.currentTimeMillis();
         MatmultDThread[] threads = new MatmultDThread[thread_no];
 
@@ -60,9 +60,9 @@ public class MatmultD { //125231132
     }
 }
 
-class MatmultDMatrixResult {
+class MatmultDMResult {
     int[][] matrix;
-    public MatmultDMatrixResult(int row, int column) {
+    public MatmultDMResult(int row, int column) {
         this.matrix = new int[row][column];
     }
     synchronized void setResult(int row, int column, int result) {
@@ -73,9 +73,9 @@ class MatmultDMatrixResult {
 class MatmultDThread extends Thread {
     final int thread_id, thread_num;
     final int a[][], b[][];
-    MatmultDMatrixResult res_mat;
+    MatmultDMResult res_mat;
     public MatmultDThread(int thread_id, int thread_num, int a[][], int b[][],
-                           MatmultDMatrixResult res_mat) {
+                          MatmultDMResult res_mat) {
         this.thread_id = thread_id;
         this.thread_num = thread_num;
         this.a = a;
@@ -84,7 +84,7 @@ class MatmultDThread extends Thread {
     }
 
     @Override
-    public void run() {
+    public void run() { //a[m][n], b[n][p]
         long startTime = System.currentTimeMillis();
         int n = a[0].length;
         int m = a.length;
