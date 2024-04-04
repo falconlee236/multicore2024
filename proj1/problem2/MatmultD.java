@@ -3,7 +3,7 @@ package proj1.problem2;
 import java.util.Scanner;
 
 public class MatmultD { //125231132
-    private static final int THREAD_NUM = 1;
+    private static final int THREAD_NUM = 4;
     private static final Scanner sc = new Scanner(System.in);
     public static void main(String [] args) {
         int thread_no=0;
