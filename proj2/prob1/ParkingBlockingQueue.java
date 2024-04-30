@@ -1,9 +1,8 @@
 package proj2.prob1;
-
 import java.util.concurrent.ArrayBlockingQueue;
 
 class ParkingGarage_ABQ {
-    private ArrayBlockingQueue<Car_ABQ> parkingLot;
+    private final ArrayBlockingQueue<Car_ABQ> parkingLot;
     public ParkingGarage_ABQ(int places) {
         if (places < 0)
             places = 0;
@@ -12,10 +11,12 @@ class ParkingGarage_ABQ {
     public void enter(Car_ABQ car) { // enter parking garage
         try {
             parkingLot.put(car);
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException ignored) {}
     }
-    public void leave(Car_ABQ car) { // leave parking garage
-        parkingLot.remove(car);
+    public void leave() { // leave parking garage
+        try {
+            parkingLot.take();
+        } catch (InterruptedException ignored) {}
     }
     public int getPlaces()
     {
@@ -25,7 +26,7 @@ class ParkingGarage_ABQ {
 
 
 class Car_ABQ extends Thread {
-    private ParkingGarage_ABQ parkingGarage;
+    private final ParkingGarage_ABQ parkingGarage;
     public Car_ABQ(String name, ParkingGarage_ABQ p) {
         super(name);
         this.parkingGarage = p;
@@ -66,7 +67,7 @@ class Car_ABQ extends Thread {
                 sleep((int)(Math.random() * 20000)); // stay within the parking garage
             } catch (InterruptedException e) {}
             aboutToLeave();
-            parkingGarage.leave(this);
+            parkingGarage.leave();
             Left();
 
         }
