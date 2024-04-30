@@ -2,9 +2,9 @@ package proj2.prob2;
 
 import java.util.concurrent.Semaphore;
 
-class ParkingGarage_Semaphore {
-    private Semaphore parkingLot;
-    public ParkingGarage_Semaphore(int places) {
+class ParkingGarage_SP {
+    private final Semaphore parkingLot;
+    public ParkingGarage_SP(int places) {
         if (places < 0)
             places = 0;
         parkingLot = new Semaphore(places);
@@ -24,9 +24,9 @@ class ParkingGarage_Semaphore {
 }
 
 
-class Car_Semaphore extends Thread {
-    private ParkingGarage_Semaphore parkingGarage;
-    public Car_Semaphore(String name, ParkingGarage_Semaphore p) {
+class Car_SP extends Thread {
+    private final ParkingGarage_SP parkingGarage;
+    public Car_SP(String name, ParkingGarage_SP p) {
         super(name);
         this.parkingGarage = p;
         start();
@@ -76,9 +76,9 @@ class Car_Semaphore extends Thread {
 
 public class ParkingSemaphore {
     public static void main(String[] args){
-        ParkingGarage_Semaphore parkingGarage = new ParkingGarage_Semaphore(7);
+        ParkingGarage_SP parkingGarage = new ParkingGarage_SP(7);
         for (int i=1; i<= 10; i++) {
-            Car_Semaphore c = new Car_Semaphore("Car "+i, parkingGarage);
+            Car_SP c = new Car_SP("Car "+i, parkingGarage);
         }
     }
 }
