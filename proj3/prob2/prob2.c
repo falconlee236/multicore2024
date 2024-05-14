@@ -42,9 +42,9 @@ int main(int ac, char **av){
     }
     pi = step * sum;
     end = omp_get_wtime();
-    
+
     double diff = end - start;
-    printf("Execution Time : %lfs\n", diff);
+    printf("Execution Time : %lfms\n", diff * 1000);
 
     printf("pi=%.24lf\n", pi);
     return 0;
