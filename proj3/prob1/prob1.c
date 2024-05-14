@@ -25,7 +25,7 @@ void count_prime(int i, int* counter) {
     }
 }
 
-int main(int ac, char* av[]) {
+int main(int ac, char** av) {
     if (ac  != 3) {
         printf("Usage: %s <schedulingType> <NUM_THREADS>\n", av[0]);
         return 1;
@@ -54,10 +54,13 @@ int main(int ac, char* av[]) {
 #pragma omp parallel for num_threads(NUM_THREADS) schedule(dynamic, 10)
 		for (int i = 0; i < NUM_END; i++)
             count_prime(i, &counter);
+    } else {
+        printf("Invalid scheduling type\n");
+        return 1;
     }
 
 	t2 = omp_get_wtime();
-    
+
 	printf("Program Execution Time : %lfms\n", (t2 - t1) * 1000);
 	printf("1...%d prime# counter=%d\n", NUM_END - 1, counter);
 	return 0;
